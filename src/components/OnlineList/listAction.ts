@@ -10,6 +10,7 @@ import playerState from '@/store/player/state'
 import musicSdk from '@/utils/musicSdk'
 import { toOldMusicInfo } from '@/utils'
 import { clearMusicUrlByMusic } from '@/utils/data'
+import { downloadMusic } from '@/core/download/simple'
 
 export const handlePlay = (musicInfo: LX.Music.MusicInfoOnline) => {
   void addListMusics(LIST_IDS.DEFAULT, [musicInfo], settingState.setting['list.addMusicLocationType']).then(() => {
@@ -46,6 +47,10 @@ export const clearMusicUrl = async(musicInfo: LX.Music.MusicInfoOnline) => {
     return
   }
   toast(global.i18n.t('list_remove_cache_success_tip'))
+}
+
+export const handleDownload = (musicInfo: LX.Music.MusicInfoOnline) => {
+  void downloadMusic(musicInfo)
 }
 
 export const handleDislikeMusic = async(musicInfo: LX.Music.MusicInfoOnline) => {

@@ -12,6 +12,7 @@ import { type Metadata } from '@/components/MetadataEditModal'
 import musicSdk from '@/utils/musicSdk'
 import { getListMusicSync } from '@/utils/listManage'
 import { clearMusicUrlByMusic } from '@/utils/data'
+import { downloadMusic } from '@/core/download/simple'
 
 export const handlePlay = (listId: SelectInfo['listId'], index: SelectInfo['index']) => {
   void playList(listId, index)
@@ -128,6 +129,10 @@ export const clearMusicUrl = async(musicInfo: SelectInfo['musicInfo']) => {
   toast(global.i18n.t('list_remove_cache_success_tip'))
 }
 
+
+export const handleDownload = (musicInfo: SelectInfo['musicInfo']) => {
+  void downloadMusic(musicInfo)
+}
 
 export const handleDislikeMusic = async(musicInfo: SelectInfo['musicInfo']) => {
   const confirm = await confirmDialog({

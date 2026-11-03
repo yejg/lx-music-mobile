@@ -6,6 +6,12 @@ Project versioning adheres to [Semantic Versioning](http://semver.org/).
 Commit convention is based on [Conventional Commits](http://conventionalcommits.org).
 Change log format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [1.9.3] - 2026-11-02
+
+### 新增
+
+- 歌曲菜单新增“下载”按钮，可将当前歌曲下载到系统下载目录下的 `lx-music` 文件夹（实验性，依赖音源返回的可下载链接）
+
 ## [1.9.2](https://github.com/lyswhut/lx-music-mobile/compare/v1.9.1...v1.9.2) - 2026-10-30
 
 ### 修复
