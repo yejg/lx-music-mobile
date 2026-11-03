@@ -409,6 +409,8 @@
   "setting_download_save_path_current": "当前：{path}",
   "setting_download_save_path_reset": "恢复默认",
   "setting_download_save_path_select": "选择目录",
+  "setting_download_save_path_unsupported": "该目录暂不支持：{reason}\n\n请选择内置存储（主存储）下的目录，或使用「恢复默认」。\n所选目录：{path}",
+  "download_save_path_invalid": "下载目录不可用：{reason}。请到设置中重新选择目录或恢复默认。",
   "setting_search": "搜索设置",
   "setting_search_show_history_search": "显示历史搜索记录",
   "setting_search_show_hot_search": "显示热门搜索",

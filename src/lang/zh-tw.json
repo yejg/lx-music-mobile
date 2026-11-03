@@ -409,6 +409,8 @@
   "setting_download_save_path_current": "目前：{path}",
   "setting_download_save_path_reset": "恢復預設",
   "setting_download_save_path_select": "選擇目錄",
+  "setting_download_save_path_unsupported": "該目錄暫不支援：{reason}\n\n請選擇內建儲存（主儲存）下的目錄，或使用「恢復預設」。\n所選目錄：{path}",
+  "download_save_path_invalid": "下載目錄不可用：{reason}。請到設定中重新選擇目錄或恢復預設。",
   "setting_search": "搜尋設定",
   "setting_search_show_history_search": "顯示歷史搜尋記錄",
   "setting_search_show_hot_search": "顯示熱門搜尋",

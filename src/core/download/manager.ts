@@ -5,6 +5,7 @@ import { mkdir, existsFile, downloadFile, unlink, writeFile, readDir, stat } fro
 import { checkAllFilesAccess, requestStoragePermission, toast, formatMusicName } from '@/utils/tools'
 import { getData, saveData } from '@/plugins/storage'
 import { filterFileName } from '@/utils/common'
+import { resolveSafPath, isContentUri } from '@/utils/safPath'
 import settingState from '@/store/setting/state'
 import { storageDataPrefix } from '@/config/constant'
 
@@ -21,9 +22,24 @@ const getDefaultDownloadDir = () => {
   return RNFS.DownloadDirectoryPath || (RNFS.ExternalStorageDirectoryPath + '/Download')
 }
 
-const getDownloadDir = async() => {
+/**
+ * 获取下载根目录（不含 lx-music 子目录）
+ * 会把 SAF 返回的 content URI 解析成真实文件路径
+ * @throws 当自定义目录无法解析为真实路径时抛出
+ */
+const resolveDownloadBaseDir = async(): Promise<string> => {
   const savePath = settingState.setting['download.savePath']
-  const baseDir = savePath || getDefaultDownloadDir()
+  if (!savePath) return getDefaultDownloadDir()
+
+  const result = await resolveSafPath(savePath)
+  if (!result.path) {
+    throw new Error(global.i18n.t('download_save_path_invalid', { path: savePath, reason: result.reason ?? '' }))
+  }
+  return result.path
+}
+
+const getDownloadDir = async() => {
+  const baseDir = await resolveDownloadBaseDir()
   const dir = `${baseDir}/lx-music`
   if (!await existsFile(dir)) await mkdir(dir)
   return dir
@@ -148,6 +164,20 @@ const runTask = async(task: LX.Download.ListItem) => {
   try {
     const musicInfo = task.metadata.musicInfo
 
+    // 兼容历史任务：早期版本可能把 SAF content URI 直接拼进了 filePath
+    if (isContentUri(task.metadata.filePath)) {
+      const parsed = await resolveSafPath(task.metadata.filePath)
+      if (!parsed.path) {
+        setTaskStatus(task.id, 'error', global.i18n.t('download_save_path_invalid', {
+          path: task.metadata.filePath,
+          reason: parsed.reason ?? '',
+        }))
+        return
+      }
+      task.metadata.filePath = parsed.path
+      void saveTaskList()
+    }
+
     // 写入前先确认目录可写，避免因缺少「所有文件访问权限」而卡在 0%
     await ensureWritableDir(task.metadata.filePath)
 
@@ -241,7 +271,15 @@ export const addDownloadTask = async(musicInfo: LX.Music.MusicInfo, quality?: LX
   await loadTaskList()
 
   const targetQuality = quality ?? settingState.setting['player.playQuality']
-  const dir = await getDownloadDir()
+
+  let dir: string
+  try {
+    dir = await getDownloadDir()
+  } catch (err: any) {
+    toast(String(err?.message ?? err), 'long')
+    return
+  }
+
   const fileName = buildFileName(musicInfo, targetQuality)
   const filePath = `${dir}/${fileName}`
 

@@ -409,6 +409,8 @@
   "setting_download_save_path_current": "Current: {path}",
   "setting_download_save_path_reset": "Reset to default",
   "setting_download_save_path_select": "Choose folder",
+  "setting_download_save_path_unsupported": "This folder is not supported: {reason}\n\nPlease choose a folder under internal storage (primary storage), or use \"Reset to default\".\nSelected folder: {path}",
+  "download_save_path_invalid": "Download folder unavailable: {reason}. Please re-select a folder in settings or reset to default.",
   "setting_search": "Search",
   "setting_search_show_history_search": "Enable Search History",
   "setting_search_show_hot_search": "Enable Top Searches",

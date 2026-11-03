@@ -8,7 +8,8 @@ import { useSettingValue } from '@/store/setting/hook'
 import { useI18n } from '@/lang'
 import { updateSetting } from '@/core/common'
 import { selectManagedFolder } from '@/utils/fs'
-import { checkAllFilesAccess } from '@/utils/tools'
+import { resolveSafPath } from '@/utils/safPath'
+import { checkAllFilesAccess, tipDialog } from '@/utils/tools'
 import RNFS from 'react-native-fs'
 
 const getDefaultDownloadDir = () => {
@@ -20,9 +21,24 @@ export default memo(() => {
   const savePath = useSettingValue('download.savePath')
 
   const handleSelectPath = () => {
-    void selectManagedFolder(true).then((dir) => {
+    void selectManagedFolder(true).then(async(dir) => {
       if (!dir?.path) return
-      updateSetting({ 'download.savePath': dir.path })
+
+      // openDocumentTree 返回的是 SAF content URI，需先还原成真实文件路径，
+      // 否则 RNFS 无法写入，下载会一直卡在 0%
+      const resolved = await resolveSafPath(dir.path)
+      if (!resolved.path) {
+        void tipDialog({
+          message: t('setting_download_save_path_unsupported', {
+            path: dir.path,
+            reason: resolved.reason ?? '',
+          }),
+          btnText: t('ok'),
+        })
+        return
+      }
+
+      updateSetting({ 'download.savePath': resolved.path })
       // 选到 Download 之外的目录（如 Music）时，需要「所有文件访问权限」
       void checkAllFilesAccess()
     }).catch((err) => {
