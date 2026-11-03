@@ -6,11 +6,22 @@ Project versioning adheres to [Semantic Versioning](http://semver.org/).
 Commit convention is based on [Conventional Commits](http://conventionalcommits.org).
 Change log format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [1.9.3] - 2026-11-02
+## [1.9.3] - 2026-11-03
 
 ### 新增
 
-- 歌曲菜单新增“下载”按钮，可将当前歌曲下载到系统下载目录下的 `lx-music` 文件夹（实验性，依赖音源返回的可下载链接）
+- 新增下载管理页面，支持查看下载中/已下载任务，可对任务进行暂停、继续、重试、删除等操作
+- 下载任务新增状态持久化，重启应用后可恢复下载队列
+- 支持下载歌曲时同时下载同名歌词文件（.lrc）
+- 设置新增“下载目录”与“同时下载歌词”选项
+- 侧边栏导航新增“下载管理”入口
+- 首次启动自动导入内置音源并作为默认音源
+- 新增“所有文件访问权限”引导，支持下载到 Music 等非 Download 目录
+
+### 变更
+
+- 歌曲列表的“下载”入口统一接入下载管理器
+- 许可协议阅读倒计时由 20 秒调整为 5 秒
 
 ## [1.9.2](https://github.com/lyswhut/lx-music-mobile/compare/v1.9.1...v1.9.2) - 2026-10-30
 

@@ -23,6 +23,10 @@ import { StyleSheet, type StyleProp, type TextStyle } from 'react-native'
 
 const IcoMoon = createIconSetFromIcoMoon(icoMoonConfig)
 
+// 字体里实际存在的图标名，用于开发期校验，避免写错名字时只显示 "?"
+const iconNames = new Set<string>(icoMoonConfig.icons.map(icon => icon.properties.name))
+const warnedIconNames = new Set<string>()
+
 
 // https://oblador.github.io/react-native-vector-icons/
 
@@ -35,6 +39,11 @@ interface IconProps extends Omit<ComponentProps<IconType>, 'style'> {
 
 export const Icon = memo(({ size = 15, rawSize, color, style, ...props }: IconProps) => {
   const theme = useTheme()
+  const name = props.name
+  if (__DEV__ && name && !iconNames.has(name) && !warnedIconNames.has(name)) {
+    warnedIconNames.add(name)
+    console.warn(`[Icon] 图标 "${name}" 在图标字体中不存在，将显示为 "?"`)
+  }
   const textShadow = useTextShadow()
   const newStyle = textShadow ? StyleSheet.compose({
     textShadowColor: theme['c-primary-dark-300-alpha-800'],

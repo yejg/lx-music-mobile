@@ -381,5 +381,31 @@ public class UtilsModule extends ReactContextBaseJavaModule {
       }
     }).start();
   }
+
+  /**
+   * 当前系统是否支持“所有文件访问权限”（Android 11+）
+   */
+  @ReactMethod
+  public void isAllFilesAccessSupported(Promise promise) {
+    promise.resolve(AllFilesAccessUtil.isSupported());
+  }
+
+  /**
+   * 是否已获得“所有文件访问权限”
+   */
+  @ReactMethod
+  public void isAllFilesAccessGranted(Promise promise) {
+    promise.resolve(AllFilesAccessUtil.isGranted(reactContext.getApplicationContext()));
+  }
+
+  /**
+   * 打开“所有文件访问权限”系统设置页
+   */
+  @ReactMethod
+  public void requestAllFilesAccess(Promise promise) {
+    Activity currentActivity = reactContext.getCurrentActivity();
+    boolean result = AllFilesAccessUtil.request(currentActivity, reactContext.getPackageName());
+    promise.resolve(result);
+  }
 }
 

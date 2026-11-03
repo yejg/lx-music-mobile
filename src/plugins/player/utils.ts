@@ -176,7 +176,7 @@ export interface NowPlayingTitles {
 }
 export const updateNowPlayingTitles = async(titles: NowPlayingTitles) => {
   // console.log('set playing titles', titles)
-  return TrackPlayer.updateNowPlayingTitles(titles)
+  return (TrackPlayer.updateNowPlayingTitles as any)(titles)
 }
 
 export const resetPlay = async() => Promise.all([setPause(), setCurrentTime(0)])

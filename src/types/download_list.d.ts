@@ -41,13 +41,13 @@ declare namespace LX {
 
     interface ListItem {
       id: string
-      isComplate: boolean
       status: DownloadTaskStatus
       statusText: string
       downloaded: number
       total: number
       progress: number
       speed: string
+      isComplate: boolean
       metadata: {
         musicInfo: LX.Music.MusicInfoOnline
         url: string | null
@@ -55,6 +55,7 @@ declare namespace LX {
         ext: FileExt
         fileName: string
         filePath: string
+        lyricPath?: string
       }
     }
 

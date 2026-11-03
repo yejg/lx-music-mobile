@@ -3,7 +3,7 @@ import { Platform, ToastAndroid, BackHandler, Linking, Dimensions, Alert, Appear
 import Clipboard from '@react-native-clipboard/clipboard'
 import { storageDataPrefix } from '@/config/constant'
 import { gzipFile, readFile, temporaryDirectoryPath, unGzipFile, unlink, writeFile } from '@/utils/fs'
-import { getSystemLocales, isIgnoringBatteryOptimization, isNotificationsEnabled, requestNotificationPermission, requestIgnoreBatteryOptimization, shareText } from '@/utils/nativeModules/utils'
+import { getSystemLocales, isIgnoringBatteryOptimization, isNotificationsEnabled, isAllFilesAccessGranted, isAllFilesAccessSupported, requestNotificationPermission, requestIgnoreBatteryOptimization, requestAllFilesAccess, shareText } from '@/utils/nativeModules/utils'
 import musicSdk from '@/utils/musicSdk'
 import { getData, removeData, saveData } from '@/plugins/storage'
 import BackgroundTimer from 'react-native-background-timer'
@@ -328,6 +328,56 @@ export const resetNotificationPermissionCheck = async() => {
 }
 export const resetIgnoringBatteryOptimizationCheck = async() => {
   return removeData(storageDataPrefix.ignoringBatteryOptimizationTipEnable)
+}
+
+/**
+ * 检查“所有文件访问权限”（Android 11+）
+ * 该权限用于写入 Music 等非 Download 目录，没有它时下载会卡在 0%
+ * @param isForce 为 true 时忽略“不再提示”，强制检查
+ * @returns 是否已获得权限
+ */
+export const checkAllFilesAccess = async(isForce = false): Promise<boolean> => {
+  if (!isAndroid) return true
+  if (!await isAllFilesAccessSupported()) return true
+  if (await isAllFilesAccessGranted()) return true
+  if (!isForce) {
+    const isHide = await getData(storageDataPrefix.allFilesAccessTipEnable)
+    if (isHide != null) return false
+  }
+  await new Promise<void>((resolve) => {
+    Alert.alert(
+      global.i18n.t('all_files_access_check_title'),
+      global.i18n.t('all_files_access_check_tip'),
+      [
+        {
+          text: global.i18n.t('never_show'),
+          onPress: () => {
+            void saveData(storageDataPrefix.allFilesAccessTipEnable, '1')
+            resolve()
+          },
+        },
+        {
+          text: global.i18n.t('disagree'),
+          onPress: () => {
+            resolve()
+          },
+        },
+        {
+          text: global.i18n.t('agree_go'),
+          onPress: () => {
+            requestAnimationFrame(() => {
+              void requestAllFilesAccess().then((result) => {
+                if (!result) toast(global.i18n.t('all_files_access_deny_tip'))
+                resolve()
+              })
+            })
+          },
+        },
+      ],
+      { cancelable: false },
+    )
+  })
+  return isAllFilesAccessGranted()
 }
 
 export const formatMusicName = (format: string, name: string, singer: string) => {

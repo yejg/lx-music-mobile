@@ -222,6 +222,7 @@ const updateMetaInfo = async(mInfo: LX.Player.MusicInfo) => {
     title = playerState.lastLyric
     artist = `${mInfo.name}${mInfo.singer ? ` - ${mInfo.singer}` : ''}`
   }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   await TrackPlayer.updateNowPlayingMetadata({
     title,
     artist,
@@ -229,7 +230,7 @@ const updateMetaInfo = async(mInfo: LX.Player.MusicInfo) => {
     artwork,
     duration: state.prevDuration || 0,
     lyric: getCurrentFullLyric(mInfo.id),
-  }, state.isPlaying)
+  } as any, state.isPlaying)
 }
 
 

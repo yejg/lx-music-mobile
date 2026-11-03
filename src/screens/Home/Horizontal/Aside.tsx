@@ -4,12 +4,13 @@ import { useNavActiveId, useStatusbarHeight } from '@/store/common/hook'
 import { useTheme } from '@/store/theme/hook'
 import { Icon } from '@/components/common/Icon'
 import { confirmDialog, createStyle, exitApp as backHome } from '@/utils/tools'
-import { NAV_MENUS } from '@/config/constant'
-import type { InitState } from '@/store/common/state'
-// import commonState from '@/store/common/state'
+import { NAV_MENUS, type NAV_MENU_ID_Type } from '@/config/constant'
+// import type { InitState } from '@/store/common/state'
+import commonState from '@/store/common/state'
 import { exitApp, setNavActiveId } from '@/core/common'
 import { BorderWidths } from '@/theme'
 import { useSettingValue } from '@/store/setting/hook'
+import { pushDownloadScreen } from '@/navigation/navigation'
 
 const NAV_WIDTH = 68
 
@@ -76,7 +77,7 @@ const Header = () => {
   )
 }
 
-type IdType = InitState['navActiveId'] | 'nav_exit' | 'back_home'
+type IdType = NAV_MENU_ID_Type | 'nav_exit' | 'back_home'
 
 const MenuItem = ({ id, icon, onPress }: {
   id: IdType
@@ -121,6 +122,10 @@ export default memo(() => {
         return
       case 'back_home':
         backHome()
+        return
+      case 'nav_download':
+        global.app_event.changeMenuVisible(false)
+        pushDownloadScreen(commonState.componentIds.home!)
         return
     }
 

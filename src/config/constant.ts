@@ -25,6 +25,7 @@ export enum COMPONENT_IDS {
   playDetail = 'playDetail',
   songlistDetail = 'songlistDetail',
   comment = 'comment',
+  download = 'download',
 }
 
 export enum NAV_SHEAR_NATIVE_IDS {
@@ -47,6 +48,7 @@ export const storageDataPrefix = {
   listPrevSelectId: '@list_prev_select_id',
 
   lyric: '@lyric__',
+  downloadTaskList: '@download_task_list',
   musicUrl: '@music_url__',
   musicOtherSource: '@music_other_source__',
   playInfo: '@play_info',
@@ -78,6 +80,8 @@ export const storageDataPrefix = {
   dislikeList: '@dislike_list',
 
   userApi: '@user_api__',
+  defaultSourceImported: '@default_source_imported',
+  allFilesAccessTipEnable: '@all_files_access_tip_enable',
 } as const
 
 // v0.x.x 版本的 data keys
@@ -103,11 +107,13 @@ export const NAV_MENUS = [
   { id: 'nav_songlist', icon: 'album' },
   { id: 'nav_top', icon: 'leaderboard' },
   { id: 'nav_love', icon: 'love' },
-  // { id: 'download', icon: 'download-2' },
+  { id: 'nav_download', icon: 'download-2' },
   { id: 'nav_setting', icon: 'setting' },
 ] as const
 
-export type NAV_ID_Type = typeof NAV_MENUS[number]['id']
+export type NAV_MENU_ID_Type = typeof NAV_MENUS[number]['id']
+export const HOME_NAV_IDS = ['nav_search', 'nav_songlist', 'nav_top', 'nav_love', 'nav_setting'] as const
+export type NAV_ID_Type = typeof HOME_NAV_IDS[number]
 
 export const LXM_FILE_EXT_RXP = ['json', 'lxmc', 'bin']
 export const USER_API_SOURCE_FILE_EXT_RXP = ['js']

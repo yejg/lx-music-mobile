@@ -99,3 +99,41 @@ export const requestIgnoreBatteryOptimization = async() => new Promise<boolean>(
     resolve(false)
   })
 })
+
+/**
+ * 当前系统是否支持“所有文件访问权限”（Android 11+）
+ */
+export const isAllFilesAccessSupported = async(): Promise<boolean> => {
+  if (!UtilsModule.isAllFilesAccessSupported) return false
+  return UtilsModule.isAllFilesAccessSupported()
+}
+
+/**
+ * 是否已获得“所有文件访问权限”
+ */
+export const isAllFilesAccessGranted = async(): Promise<boolean> => {
+  if (!UtilsModule.isAllFilesAccessGranted) return true
+  return UtilsModule.isAllFilesAccessGranted()
+}
+
+/**
+ * 打开“所有文件访问权限”系统设置页，返回后重新检查授权结果
+ */
+export const requestAllFilesAccess = async() => new Promise<boolean>((resolve) => {
+  if (!UtilsModule.requestAllFilesAccess) {
+    resolve(false)
+    return
+  }
+  let subscription = AppState.addEventListener('change', (state) => {
+    if (state != 'active') return
+    subscription.remove()
+    setTimeout(() => {
+      void isAllFilesAccessGranted().then(resolve)
+    }, 800)
+  })
+  void UtilsModule.requestAllFilesAccess().then((opened: boolean) => {
+    if (opened) return
+    subscription.remove()
+    resolve(false)
+  })
+})

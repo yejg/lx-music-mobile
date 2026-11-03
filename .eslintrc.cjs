@@ -80,5 +80,6 @@ module.exports = {
     '*.min.js',
     'test.js',
     '*Test.ts',
+    'android/app/src/main/assets/*.js',
   ],
 }
