@@ -23,14 +23,12 @@ const getDefaultDownloadDir = () => {
 }
 
 /**
- * 获取下载根目录（不含 lx-music 子目录）
- * 会把 SAF 返回的 content URI 解析成真实文件路径
+ * 解析自定义下载目录为真实文件路径
+ * 会把 SAF 返回的 content URI 转成真实路径
  * @throws 当自定义目录无法解析为真实路径时抛出
  */
-const resolveDownloadBaseDir = async(): Promise<string> => {
+const resolveCustomDownloadDir = async(): Promise<string> => {
   const savePath = settingState.setting['download.savePath']
-  if (!savePath) return getDefaultDownloadDir()
-
   const result = await resolveSafPath(savePath)
   if (!result.path) {
     throw new Error(global.i18n.t('download_save_path_invalid', { path: savePath, reason: result.reason ?? '' }))
@@ -38,9 +36,15 @@ const resolveDownloadBaseDir = async(): Promise<string> => {
   return result.path
 }
 
+/**
+ * 获取下载目录
+ * - 默认目录：Download/lx-music
+ * - 自定义目录：直接使用所选目录，不再追加 lx-music 子目录
+ */
 const getDownloadDir = async() => {
-  const baseDir = await resolveDownloadBaseDir()
-  const dir = `${baseDir}/lx-music`
+  const dir = settingState.setting['download.savePath']
+    ? await resolveCustomDownloadDir()
+    : `${getDefaultDownloadDir()}/lx-music`
   if (!await existsFile(dir)) await mkdir(dir)
   return dir
 }

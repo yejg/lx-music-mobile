@@ -21,7 +21,7 @@ const styles = createStyle({
     // alignItems: 'center',
     // justifyContent: 'center',
     // padding: 10,
-    borderRightWidth: BorderWidths.normal,
+    // 分隔线方向由组件内根据侧边栏位置动态设置
     paddingBottom: 10,
     width: NAV_WIDTH,
   },
@@ -133,8 +133,17 @@ export default memo(() => {
     setNavActiveId(id)
   }
 
+  // 侧边栏在右侧时，分隔线画在左边缘；在左侧时画在右边缘
+  const isNavOnRight = useSettingValue('common.drawerLayoutPosition') == 'right'
+
   return (
-    <View style={{ ...styles.container, borderRightColor: theme['c-border-background'] }}>
+    <View style={{
+      ...styles.container,
+      borderRightWidth: isNavOnRight ? 0 : BorderWidths.normal,
+      borderLeftWidth: isNavOnRight ? BorderWidths.normal : 0,
+      borderRightColor: theme['c-border-background'],
+      borderLeftColor: theme['c-border-background'],
+    }}>
       <Header />
       <ScrollView style={styles.menus}>
         <View style={styles.list}>

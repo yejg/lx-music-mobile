@@ -5,6 +5,7 @@ import StatusBar from '@/components/common/StatusBar'
 import Header from './Header'
 import Main from './Main'
 import { createStyle } from '@/utils/tools'
+import { useSettingValue } from '@/store/setting/hook'
 
 const styles = createStyle({
   container: {
@@ -18,16 +19,21 @@ const styles = createStyle({
 })
 
 export default () => {
+  const drawerLayoutPosition = useSettingValue('common.drawerLayoutPosition')
+  const isNavOnRight = drawerLayoutPosition == 'right'
+
   return (
     <>
       <StatusBar />
       <View style={styles.container}>
-        <Aside />
+        {/* 侧边导航栏位置跟随「导航、收藏列表弹出方向」设置 */}
+        {isNavOnRight ? null : <Aside />}
         <View style={styles.content}>
           <Header />
           <Main />
           <PlayerBar isHome />
         </View>
+        {isNavOnRight ? <Aside /> : null}
       </View>
     </>
   )
